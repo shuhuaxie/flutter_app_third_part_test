@@ -12,7 +12,7 @@ class SqliteMockCounter {
   List<String> sqlCreateTables =
 //      "CREATE TABLE Test1 (id INTEGER PRIMARY KEY)";
 
-  [
+      [
     "CREATE TABLE [goodsType] ([id] INTEGER NOT NULL ON CONFLICT REPLACE  "
         "PRIMARY KEY AUTOINCREMENT, [name] CHAR);",
     "CREATE TABLE [goods] ("
@@ -20,7 +20,7 @@ class SqliteMockCounter {
         "[name] CHAR,"
         "[goodsTypeId] INTEGER,"
         "[sellNum] INTEGER,"
-        "[picurl] CHAR,"
+        "[picUrl] CHAR,"
         "[goodsCode] CHAR,"
         "[price] CHAR); ",
     "CREATE INDEX [goodsTypeId_index] ON [goods] ([goodsTypeId]); ",
@@ -33,9 +33,9 @@ class SqliteMockCounter {
     "CREATE INDEX [orderId_index] ON [orderItem] ([orderId]); "
   ]
 
-  //  "insert into [goodsType] values(null, '热销');" not work
+      //  "insert into [goodsType] values(null, '热销');" not work
 
-  // 初始化表
+      // 初始化表
       ;
 
   Future<String> _createNewDb(String dbName) async {
@@ -71,18 +71,18 @@ class SqliteMockCounter {
   }
 
   _onCreate(Database db, int version) async {
-    for(String s in sqlCreateTables) {
+    for (String s in sqlCreateTables) {
       await db.execute(s);
     }
   }
 
   // 增删改查测试
   test(BuildContext c) async {
-    int recordId =
-    await mdb.rawInsert('INSERT INTO goodsType(name) VALUES (?)', ['热销']);
-    recordId =
-    await mdb.rawInsert('INSERT INTO goodsType(name) VALUES (?)', ['日用品']);
-    print("recordId:" + recordId.toString());
+//    int recordId =
+//        await mdb.rawInsert('INSERT INTO goodsType(name) VALUES (?)', ['热销']);
+//    recordId =
+//        await mdb.rawInsert('INSERT INTO goodsType(name) VALUES (?)', ['日用品']);
+//    print("recordId:" + recordId.toString());
 
 //    await mdb.update('goodsType', {'name': '热销'},
 //        where: 'id = ?', whereArgs: [1]);
@@ -93,20 +93,28 @@ class SqliteMockCounter {
 //
     List<Map> list2 = await mdb.rawQuery("select * from goodsType;");
     print("qu2:" + list2.toString());
-    List<Map> list3 = await mdb.rawQuery("select * from goods;");
-    print("qu3:" + list3.toString());
-    print("start insert:" + TimeOfDay.now().format(c));
 
-    List<Goods> l = getMockGoods();
-    for (int i = 0; i < l.length; i++) {
-      Goods g = l[i];
-      await mdb.rawInsert(
-          'INSERT INTO [goods](name, sellNum, goodsTypeId, price, picUrl, goodsCode) VALUES (?, ?, ?, ?, ?, ?)',
-          [g.name, g.sellNum, g.goodsTypeId, g.price, g.picUrl, g.goodsCode]);
+//    List<Map> list3 = await mdb.rawQuery("select * from goods;");
+//    print("qu3:" + list3.toString());
+
+//    print("start insert:" + TimeOfDay.now().format(c));
+//
+//    List<Goods> l = getMockGoods();
+//    for (int i = 0; i < l.length; i++) {
+//      Goods g = l[i];
+//      await mdb.rawInsert(
+//          'INSERT INTO [goods](name, sellNum, goodsTypeId, price, picUrl, goodsCode) VALUES (?, ?, ?, ?, ?, ?)',
+//          [g.name, g.sellNum, g.goodsTypeId, g.price, g.picUrl, g.goodsCode]);
+//    }
+//    print("end insert: :" + TimeOfDay.now().format(c));
+//    List<Map> list = await mdb.rawQuery("select * from goods;");
+//    print("qu1:" + list.toString());
+    for (int i = 0; i < list2.length; i++) {
+      var id = list2[i]['id'];
+      List<Map> list3 =
+          await mdb.rawQuery('select * from goods WHERE goodsTypeId = (?) order by id DESC', [id]);
+      print("qu3:" + id.toString() + list3.toString());
     }
-    print("end insert: :" + TimeOfDay.now().format(c));
-    List<Map> list = await mdb.rawQuery("select * from goods;");
-    print("qu1:" + list.toString());
   }
 }
 
